@@ -1,11 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { logger } from 'src/logger/logger';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { RegisterUserCommand } from '../application/commands/register-user.command';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { LoginUserCommand } from '../application/commands/login-user.command';
 import { LogoutUserDto } from '../dto/logout-user.dto';
-import { LogoutUserCommand } from '../application/commands/logout-user.command';
+import { LogoutUserCommand } from '../../user/application/commands/logout-user.command';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RefreshTokenCommand } from '../application/commands/refresh-token.command';
 import { VerifyEmailDto } from '../dto/verify-email.dto';
@@ -23,9 +24,12 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() dto: RegisterUserDto) {
-    return this.commandBus.execute(
-      new RegisterUserCommand(dto.email, dto.password, dto.fullName),
-    );
+    return this.commandBus.execute(new RegisterUserCommand(dto.email, dto.password, dto.fullName));
+  }
+
+  @Post('verify-email')
+  async verifyEmail(@Body() dto: VerifyEmailDto) {
+    return this.commandBus.execute(new VerifyEmailCommand(dto.email));
   }
 
   @Post('login')
@@ -48,18 +52,8 @@ export class AuthController {
     return this.commandBus.execute(new ChangePasswordCommand(dto.token, dto.password));
   }
 
-  @Post('verify-email')
-  async verifyEmail(@Body() dto: VerifyEmailDto) {
-    return this.commandBus.execute(new VerifyEmailCommand(dto.email));
-  }
-
   @Post('refresh-token')
   async refreshToken(@Body() dto: RefreshTokenDto) {
     return this.commandBus.execute(new RefreshTokenCommand(dto.token));
-  }
-
-  @Post('logout')
-  async logout(@Body() dto: LogoutUserDto) {
-    return this.commandBus.execute(new LogoutUserCommand(dto.token));
   }
 }

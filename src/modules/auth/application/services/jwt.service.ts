@@ -4,10 +4,10 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class JwtService {
-  private readonly secret = process.env.JWT_SECRET || 'secret';
+  private readonly secret = process.env.JWT_SECRET || 'secretKey';
 
-  sign(payload: any): string {
-    return jwt.sign(payload, this.secret, { expiresIn: '7d' });
+  sign(payload: any, expiresIn: string): string {
+    return jwt.sign(payload, this.secret, { expiresIn: expiresIn });
   }
 
   verify(token: string): any {

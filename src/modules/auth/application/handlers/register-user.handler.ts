@@ -1,8 +1,11 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { pick } from 'lodash';
 import { PrismaService } from 'src/infrastructure/database/prisma.service';
 import { RegisterUserCommand } from '../commands/register-user.command';
 import { UserRegisteredEvent } from '../events/user-registered.event';
+import { successResponse } from 'src/common/utils/response.util';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
@@ -19,7 +22,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     });
 
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new BadRequestException('User already exists');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -34,6 +37,8 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     // Emit event
     this.eventBus.publish(new UserRegisteredEvent(user.id, email));
 
-    return { user };
+    // Return only specific fields (id, email, fullName) using lodash pick
+    const userResponse = pick(user, ['id', 'email', 'fullName']);
+    return successResponse({ user: userResponse }, 'User registered successfully');
   }
 }
