@@ -1,14 +1,14 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { GetUserInfoCommand } from "../commands/get-user-info.command";
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { UserService } from "../services/user.service";
+import { GetUserInfoQuery } from "../query/get-user-info.command";
 
-@CommandHandler(GetUserInfoCommand)
-export class GetUserInfoHandler implements ICommandHandler<GetUserInfoCommand> {
+@QueryHandler(GetUserInfoQuery)
+export class GetUserInfoHandler implements IQueryHandler<GetUserInfoQuery> {
   constructor(
     private readonly userService: UserService,
 ) {}
 
-  async execute(command: GetUserInfoCommand): Promise<any> {
+  async execute(command: GetUserInfoQuery): Promise<any> {
     return this.userService.getUserInfo(command.userId);
   }
 }

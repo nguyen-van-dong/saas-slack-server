@@ -8,4 +8,8 @@ export class UserService {
   async getUserInfo(userId: string): Promise<any> {
     return this.prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true, fullName: true } });
   }
+
+  async updateUser(userId: string, profile: any): Promise<any> {
+    return this.prisma.user.update({ where: { id: userId }, data: profile });
+  }
 }
