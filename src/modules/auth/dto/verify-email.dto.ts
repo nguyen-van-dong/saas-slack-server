@@ -2,5 +2,5 @@ import { IsNotEmpty } from 'class-validator';
 
 export class VerifyEmailDto {
   @IsNotEmpty()
-  email: string;
+  token: string;
 }

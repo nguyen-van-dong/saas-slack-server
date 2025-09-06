@@ -10,15 +10,23 @@ export class EmailProcessor extends WorkerHost {
   }
 
   async process(job: Job) {
-    switch (job.name) {
-      case 'send-activation-email':
-        return this.mailService.sendActivationEmail(job.data.email, job.data.token);
+    console.log(`[EmailProcessor] Processing job: ${job.name}`, job.data);
+    
+    try {
+      switch (job.name) {
+        case 'send-activation-email':
+          return await this.mailService.sendActivationEmail(job.data.email, job.data.token);
 
-      case 'send-reset-password-email':
-        return this.mailService.sendResetPasswordEmail(job.data.email, job.data.token);
+        case 'send-reset-password-email':
+          return await this.mailService.sendResetPasswordEmail(job.data.email, job.data.token);
 
-      default:
-        console.warn(`[EmailProcessor] Unknown job name: ${job.name}`);
+        default:
+          console.warn(`[EmailProcessor] Unknown job name: ${job.name}`);
+          throw new Error(`Unknown job name: ${job.name}`);
+      }
+    } catch (error) {
+      console.error(`[EmailProcessor] Error processing job ${job.name}:`, error);
+      throw error;
     }
   }
 }

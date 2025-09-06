@@ -23,7 +23,7 @@ model User {
   password           String
   isActive           Boolean  @default(false)
 
-  activationToken    String?  @unique
+  resetPasswordExpires    DateTime?
   resetPasswordToken String?  @unique
 
   createdAt          DateTime @default(now())

@@ -10,9 +10,15 @@ import { VerifyEmailHandler } from './application/handlers/verify-email.handler'
 import { ForgotPasswordHandler } from './application/handlers/forgot-password.handler';
 import { ResetPasswordHandler } from './application/handlers/reset-password.handler';
 import { ChangePasswordHandler } from './application/handlers/change-password.handler';
-import { RefreshTokenHandler } from './application/handlers/refresh-token.handler';
+import { RefreshTokenHandler } from '../user/application/handlers/refresh-token.handler';
 import { JwtStrategy } from './application/infrastructure/strategies/jwt.strategy';
 import { RedisModule } from 'src/infrastructure/cache/redis.module';
+import { AuthService } from './application/services/auth.service';
+import { UserRepository } from '../user/infrastructure/user.repository';
+import { UserRegisteredListener } from './application/listeners/user-registered.listener';
+import { QueueModule } from 'src/infrastructure/queue/queue.module';
+import { EmailJob } from 'src/infrastructure/queue/jobs/email.job';
+import { ForgotPasswordListener } from './application/listeners/forgot-password.listener';
 
 @Module({
   imports: [
@@ -22,6 +28,7 @@ import { RedisModule } from 'src/infrastructure/cache/redis.module';
       signOptions: { expiresIn: '1d' },
     }),
     RedisModule,
+    QueueModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -35,6 +42,11 @@ import { RedisModule } from 'src/infrastructure/cache/redis.module';
     ChangePasswordHandler,
     RefreshTokenHandler,
     JwtStrategy,
+    AuthService,
+    UserRepository,
+    UserRegisteredListener,
+    ForgotPasswordListener,
+    EmailJob,
   ],
   exports: [JwtModule],
 })

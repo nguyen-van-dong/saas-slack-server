@@ -1,20 +1,17 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { UserRegisteredEvent } from '../events/user-registered.event';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
-import { Queues } from 'src/infrastructure/queue/queues';
+import { EmailJob } from 'src/infrastructure/queue/jobs/email.job';
 
 @EventsHandler(UserRegisteredEvent)
 export class UserRegisteredListener implements IEventHandler<UserRegisteredEvent> {
-  constructor(
-    @InjectQueue(Queues.EMAIL)
-    private readonly emailQueue: Queue,
-  ) {}
+  constructor(private readonly emailJob: EmailJob) {}
 
   async handle(event: UserRegisteredEvent) {
-    await this.emailQueue.add('send-activation-email', {
-      email: event.email,
-    //   token: event.token,
-    });
+    try {
+      await this.emailJob.sendActivationEmail(event.email, event.userId);
+    } catch (error) {
+      console.error('UserRegisteredListener: Error sending activation email:', error);
+      throw error;
+    }
   }
 }

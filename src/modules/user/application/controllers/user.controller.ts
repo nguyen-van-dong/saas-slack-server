@@ -4,6 +4,8 @@ import { LogoutUserCommand } from "../commands/logout-user.command";
 import { JwtAuthGuard } from "src/modules/auth/application/infrastructure/guards/jwt.guard";
 import { GetUserInfoQuery } from "../query/get-user-info.command";
 import { UpdateProfileCommand } from "../commands/update-profile.command";
+import { RefreshTokenDto } from "../../dto/refresh-token.dto";
+import { RefreshTokenCommand } from "../commands/refresh-token.command";
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -21,6 +23,11 @@ export class UserController {
   @Post('logout')
   async logout(@Req() req: any) {
     return this.commandBus.execute(new LogoutUserCommand(req.user.userId));
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() dto: RefreshTokenDto) {
+    return this.commandBus.execute(new RefreshTokenCommand(dto.token));
   }
 
   @Post('update-profile')

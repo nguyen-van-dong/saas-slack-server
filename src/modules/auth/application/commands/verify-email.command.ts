@@ -1,3 +1,3 @@
 export class VerifyEmailCommand {
-    constructor(public readonly email: string) { }
+    constructor(public readonly token: string) { }
 }
