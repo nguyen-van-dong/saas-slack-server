@@ -12,6 +12,8 @@ import { ResetPasswordDto } from '../dto/reset-pasword.dto';
 import { ResetPasswordCommand } from '../application/commands/reset-password.command';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { ChangePasswordCommand } from '../application/commands/change-password.command';
+import { RefreshTokenCommand } from '../application/commands/refresh-token.command';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +42,11 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.commandBus.execute(new ResetPasswordCommand(dto.token, dto.password));
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() dto: RefreshTokenDto) {
+    return this.commandBus.execute(new RefreshTokenCommand(dto.token));
   }
 
   @Post('change-password')

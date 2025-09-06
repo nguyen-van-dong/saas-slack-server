@@ -108,4 +108,55 @@ export class AuthService {
     });
     return successResponse(null, 'Password reset successfully');
   }
+
+  async refreshToken(token: string): Promise<any> {
+    try {
+      // Verify the refresh token
+      const decoded = this.jwtService.verify(token);
+      
+      if (!decoded.userId) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
+      // Check if refresh token exists in Redis
+      const storedRefreshToken = await this.redisService.get(`refresh:${decoded.userId}`);
+      if (!storedRefreshToken || storedRefreshToken !== token) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+      // Get user information
+      const user = await this.userRepository.findById(decoded.userId);
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+      if (!user.isActive) {
+        throw new UnauthorizedException('User account is not active');
+      }
+
+      // Generate new tokens
+      const newAccessToken = await this.jwtService.sign({ userId: user.id, role: 'USER' }, '10m');
+      const newRefreshToken = await this.jwtService.sign({ userId: user.id, role: 'USER' }, '7d');
+
+      // Update refresh token in Redis
+      await this.redisService.set(`refresh:${user.id}`, newRefreshToken, 7 * 24 * 60 * 60);
+
+      return successResponse({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+        }
+      }, 'Token refreshed successfully');
+    } catch (error) {
+      if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
+        throw error;
+      }
+      // Handle JWT verification errors
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+      throw new BadRequestException('Token refresh failed');
+    }
+  }
 }

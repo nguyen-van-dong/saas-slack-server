@@ -6,7 +6,8 @@ import { UserController } from './application/controllers/user.controller';
 import { GetUserInfoHandler } from './application/handlers/get-user-info.handler';
 import { UserService } from './application/services/user.service';
 import { UserRepository } from './infrastructure/user.repository';
-import { RefreshTokenHandler } from './application/handlers/refresh-token.handler';
+import { JwtService } from 'src/modules/auth/application/services/jwt.service';
+import { RedisService } from 'src/infrastructure/cache/redis.service';
 
 @Module({
   imports: [CqrsModule],
@@ -17,7 +18,8 @@ import { RefreshTokenHandler } from './application/handlers/refresh-token.handle
     GetUserInfoHandler,
     UserService,
     UserRepository,
-    RefreshTokenHandler,
+    JwtService,
+    RedisService,
   ],
 })
 export class UserModule {}

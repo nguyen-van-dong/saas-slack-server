@@ -10,7 +10,7 @@ import { VerifyEmailHandler } from './application/handlers/verify-email.handler'
 import { ForgotPasswordHandler } from './application/handlers/forgot-password.handler';
 import { ResetPasswordHandler } from './application/handlers/reset-password.handler';
 import { ChangePasswordHandler } from './application/handlers/change-password.handler';
-import { RefreshTokenHandler } from '../user/application/handlers/refresh-token.handler';
+import { RefreshTokenHandler } from './application/handlers/refresh-token.handler';
 import { JwtStrategy } from './application/infrastructure/strategies/jwt.strategy';
 import { RedisModule } from 'src/infrastructure/cache/redis.module';
 import { AuthService } from './application/services/auth.service';
