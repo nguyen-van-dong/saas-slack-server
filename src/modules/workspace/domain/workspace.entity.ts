@@ -1,3 +1,9 @@
+export enum InviteStatus {
+  ACCEPTED = 'ACCEPTED',
+  DECLINED = 'DECLINED',
+  PENDING = 'PENDING'
+}
+
 export class Workspace {
   constructor(
     public readonly id: string,

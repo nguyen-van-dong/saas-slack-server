@@ -20,6 +20,13 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) { }
 
+  /**
+   * Create user
+   * @param {string} email
+   * @param {string} password
+   * @param {string} fullName
+   * @returns {Promise<any>}
+   */
   async createUser(email: string, password: string, fullName: string): Promise<any> {
     const existingUser = await this.userRepository.findByEmail(email);
 
@@ -35,6 +42,12 @@ export class AuthService {
     });
   }
 
+  /**
+   * Login
+   * @param {string} email
+   * @param {string} password
+   * @returns {Promise<any>}
+   */
   async login(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
@@ -64,6 +77,11 @@ export class AuthService {
     return userResponse;
   }
 
+  /**
+   * Verify account
+   * @param {string} token
+   * @returns {Promise<any>}
+   */
   async verifyAccount(token: string): Promise<any> {
     const user = await this.userRepository.findById(token);
     if (!user) {
@@ -78,6 +96,11 @@ export class AuthService {
     return successResponse(null, 'User verified successfully');
   }
 
+  /**
+   * Forgot password
+   * @param {string} email
+   * @returns {Promise<any>}
+   */
   async forgotPassword(email: string): Promise<any> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
@@ -92,6 +115,12 @@ export class AuthService {
     return successResponse(null, 'Reset password email sent successfully');
   }
 
+  /**
+   * Reset password
+   * @param {string} token
+   * @param {string} password
+   * @returns {Promise<any>}
+   */
   async resetPassword(token: string, password: string): Promise<any> {
     const user = await this.userRepository.findOneBy({ resetPasswordToken: token });
     if (!user) {
@@ -109,6 +138,11 @@ export class AuthService {
     return successResponse(null, 'Password reset successfully');
   }
 
+  /**
+   * Refresh token
+   * @param {string} token
+   * @returns {Promise<any>}
+   */
   async refreshToken(token: string): Promise<any> {
     try {
       // Verify the refresh token

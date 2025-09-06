@@ -3,6 +3,7 @@ import { PrismaService } from 'src/infrastructure/database/prisma.service';
 import { BaseRepository } from 'src/infrastructure/database/base-repository';
 import { WorkspaceRepositoryInterface } from '../domain/workspace.repository.interface';
 import { Workspace } from '../domain/workspace.entity';
+import { WorkspaceUser } from '@prisma/client';
 
 @Injectable()
 export class WorkspaceRepository extends BaseRepository<
@@ -35,5 +36,27 @@ export class WorkspaceRepository extends BaseRepository<
 
   async findByName(name: string): Promise<Workspace[]> {
     return this.findMany({ name });
+  }
+
+  async assignUserToWorkspace(workspaceId: string, userId: string): Promise<WorkspaceUser> {
+    return this.prisma.workspaceUser.create({
+      data: {
+        workspace: {
+          connect: {
+            id: workspaceId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        role: 'USER',
+      },
+      include: {
+        user: true,
+        workspace: true,
+      },
+    });
   }
 }

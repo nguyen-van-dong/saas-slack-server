@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './infrastructure/cache/redis.module';
 import { UserModule } from './modules/user/user.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './modules/user/user.module';
     RedisModule,
     AuthModule,
     UserModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

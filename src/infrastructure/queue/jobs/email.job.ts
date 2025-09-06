@@ -14,4 +14,8 @@ export class EmailJob {
   async sendResetPasswordEmail(email: string, token: string) {
     await this.queue.add('send-reset-password-email', { email, token });
   }
+
+  async sendInviteEmail(workspaceUserId: string, userId: string) {
+    await this.queue.add('send-invite-email', { workspaceUserId, userId });
+  }
 }
